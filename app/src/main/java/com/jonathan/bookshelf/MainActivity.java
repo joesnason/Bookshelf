@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "Bookshelf";
     private Activity mMainActivity;
     private Button scan_btn;
-    private TextView bookID;
+    private EditText bookID;
 
 
     static private int  REQUEST_CAMERA = 1;
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init_view(){
         scan_btn = (Button)findViewById(R.id.scan);
-        bookID = (TextView) findViewById(R.id.bookid);
+        bookID = (EditText) findViewById(R.id.bookid);
     }
 
 
