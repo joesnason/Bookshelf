@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,12 +21,25 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = "Bookshelf";
     private Activity mMainActivity;
     private Button scan_btn;
-    private EditText bookID;
+    private EditText mBookID;
+    private TextView mBookName;
+
+    private UIHandler mUIHandler;
+    private Thread parserThread;
+    private URL url;
 
 
     static private int  REQUEST_CAMERA = 1;
@@ -55,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
             // asking whether to allow permission...
             requestCameraPermission();
         }
+
+        mUIHandler = new UIHandler();
+
     }
 
 
@@ -62,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(scanningResult!=null){
             String scanContent=scanningResult.getContents();
-            bookID.setText(scanContent);
+            mBookID.setText(scanContent);
+            parserThread = new Thread(new parseHTML());
+            parserThread.start();
         }else{
             Toast.makeText(getApplicationContext(),"nothing",Toast.LENGTH_SHORT).show();
         }
@@ -98,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void init_view(){
         scan_btn = (Button)findViewById(R.id.scan);
-        bookID = (EditText) findViewById(R.id.bookid);
+        mBookID = (EditText) findViewById(R.id.bookid);
+        mBookName = (TextView) findViewById(R.id.bookname);
     }
 
 
@@ -122,4 +143,37 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA) ;
         }
     }
+
+    private class parseHTML implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                String preURL = "http://search.books.com.tw/search/query/key/";
+                url= new URL( preURL + mBookID.getText());
+                Document doc =  Jsoup.parse(url, 3000);
+                Elements title = doc.select("a[rel=mid_image]");
+                String name = title.attr("title");
+                Log.d(TAG,"book name:" + name);
+
+                Message msg = Message.obtain();
+                msg.obj = name;
+                mUIHandler.sendMessage(msg);
+                //mBookName.setText(title.get(0).text());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private class UIHandler extends Handler {
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            //mImageViewPic.setImageBitmap((Bitmap)msg.obj);
+            mBookName.setText((String)msg.obj);
+        }
+    };
 }
