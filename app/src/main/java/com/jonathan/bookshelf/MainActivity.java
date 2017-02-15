@@ -36,12 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
     private final int UPDATE_BOOK_NAME = 1;
     private final int UPDATE_BOOK_AUTHOR = 2;
+    private final int UPDATE_BOOK_PUBLISH = 3;
 
     private Activity mMainActivity;
     private Button scan_btn;
     private EditText mBookID;
     private TextView mBookName;
     private TextView mBookAuthor;
+    private TextView mBookPublish;
 
     private UIHandler mUIHandler;
     private Thread parserThread;
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         mBookID = (EditText) findViewById(R.id.bookid);
         mBookName = (TextView) findViewById(R.id.bookname);
         mBookAuthor = (TextView) findViewById(R.id.author);
+        mBookPublish = (TextView) findViewById(R.id.publish);
     }
 
 
@@ -176,6 +179,15 @@ public class MainActivity extends AppCompatActivity {
                 updateAuthor.obj = author;
                 mUIHandler.sendMessage(updateAuthor);
 
+                Elements EPublish = doc.select("a[rel=mid_publish]");
+                String publish = EPublish.attr("title");
+                Log.d(TAG,"book publish: " + publish);
+
+                Message updatePublish = Message.obtain();
+                updatePublish.what = UPDATE_BOOK_PUBLISH;
+                updatePublish.obj = publish;
+                mUIHandler.sendMessage(updatePublish);
+
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -195,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case UPDATE_BOOK_AUTHOR:
                     mBookAuthor.setText((String)msg.obj);
+                    break;
+                case UPDATE_BOOK_PUBLISH:
+                    mBookPublish.setText((String)msg.obj);
                     break;
                 default:
                     break;
