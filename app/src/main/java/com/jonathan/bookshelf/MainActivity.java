@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private final int UPDATE_BOOK_NAME = 1;
     private final int UPDATE_BOOK_AUTHOR = 2;
     private final int UPDATE_BOOK_PUBLISH = 3;
+    private final int UPDATE_BOOK_COVER = 4;
 
     private Activity mMainActivity;
     private Button scan_btn;
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mBookName;
     private TextView mBookAuthor;
     private TextView mBookPublish;
+    private ImageView mBookCover;
 
     private UIHandler mUIHandler;
     private Thread parserThread;
@@ -127,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         mBookName = (TextView) findViewById(R.id.bookname);
         mBookAuthor = (TextView) findViewById(R.id.author);
         mBookPublish = (TextView) findViewById(R.id.publish);
+        mBookCover = (ImageView) findViewById(R.id.bookcover);
     }
 
 
@@ -162,9 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 //find book name title
                 Elements title = doc.select("a[rel=mid_image]");
                 String name = title.attr("title");
-                //String link = title.attr("href");
                 Log.d(TAG,"book name: " + name);
-                //Log.d(TAG,"book link: " + link);
                 Message msg = Message.obtain();
                 msg.what = UPDATE_BOOK_NAME;
                 msg.obj = name;
@@ -188,6 +193,17 @@ public class MainActivity extends AppCompatActivity {
                 updatePublish.obj = publish;
                 mUIHandler.sendMessage(updatePublish);
 
+                Elements EImg = doc.select("img[class=itemcov]");
+                String image_url = EImg.attr("data-original");
+                Log.d(TAG,"book image link: " + image_url);
+
+                InputStream in = new URL(image_url).openStream();
+                Bitmap bmp = BitmapFactory.decodeStream(in);
+
+                Message updateCover = Message.obtain();
+                updateCover.what = UPDATE_BOOK_COVER;
+                updateCover.obj = bmp;
+                mUIHandler.sendMessage(updateCover);
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -211,6 +227,9 @@ public class MainActivity extends AppCompatActivity {
                 case UPDATE_BOOK_PUBLISH:
                     mBookPublish.setText((String)msg.obj);
                     break;
+                case UPDATE_BOOK_COVER:
+                    mBookCover.setVisibility(View.VISIBLE);
+                    mBookCover.setImageBitmap((Bitmap)msg.obj);
                 default:
                     break;
             }
