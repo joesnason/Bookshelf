@@ -154,13 +154,17 @@ public class MainActivity extends AppCompatActivity {
                 //find book name title
                 Elements title = doc.select("a[rel=mid_image]");
                 String name = title.attr("title");
-                String link = title.attr("href");
+                //String link = title.attr("href");
                 Log.d(TAG,"book name: " + name);
-                Log.d(TAG,"book link: " + link);
-
+                //Log.d(TAG,"book link: " + link);
                 Message msg = Message.obtain();
                 msg.obj = name;
                 mUIHandler.sendMessage(msg);
+
+                Elements Eauthor = doc.select("a[rel=go_author]");
+                String author = Eauthor.attr("title");
+                Log.d(TAG,"book author: " + author);
+
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -173,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class UIHandler extends Handler {
         public void handleMessage(Message msg) {
+
             super.handleMessage(msg);
             mBookName.setText((String)msg.obj);
         }
