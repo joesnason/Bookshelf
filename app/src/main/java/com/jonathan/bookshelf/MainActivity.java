@@ -34,10 +34,14 @@ public class MainActivity extends AppCompatActivity {
     static private String TAG = "Bookshelf";
     static private int  REQUEST_CAMERA = 1;
 
+    private final int UPDATE_BOOK_NAME = 1;
+    private final int UPDATE_BOOK_AUTHOR = 2;
+
     private Activity mMainActivity;
     private Button scan_btn;
     private EditText mBookID;
     private TextView mBookName;
+    private TextView mBookAuthor;
 
     private UIHandler mUIHandler;
     private Thread parserThread;
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         scan_btn = (Button)findViewById(R.id.scan);
         mBookID = (EditText) findViewById(R.id.bookid);
         mBookName = (TextView) findViewById(R.id.bookname);
+        mBookAuthor = (TextView) findViewById(R.id.author);
     }
 
 
@@ -158,12 +163,18 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG,"book name: " + name);
                 //Log.d(TAG,"book link: " + link);
                 Message msg = Message.obtain();
+                msg.what = UPDATE_BOOK_NAME;
                 msg.obj = name;
                 mUIHandler.sendMessage(msg);
 
                 Elements Eauthor = doc.select("a[rel=go_author]");
                 String author = Eauthor.attr("title");
                 Log.d(TAG,"book author: " + author);
+
+                Message updateAuthor = Message.obtain();
+                updateAuthor.what = UPDATE_BOOK_AUTHOR;
+                updateAuthor.obj = author;
+                mUIHandler.sendMessage(updateAuthor);
 
 
             } catch (MalformedURLException e) {
@@ -178,8 +189,16 @@ public class MainActivity extends AppCompatActivity {
     private class UIHandler extends Handler {
         public void handleMessage(Message msg) {
 
-            super.handleMessage(msg);
-            mBookName.setText((String)msg.obj);
+            switch (msg.what){
+                case UPDATE_BOOK_NAME:
+                    mBookName.setText((String)msg.obj);
+                    break;
+                case UPDATE_BOOK_AUTHOR:
+                    mBookAuthor.setText((String)msg.obj);
+                    break;
+                default:
+                    break;
+            }
         }
     };
 }
