@@ -31,7 +31,9 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String TAG = "Bookshelf";
+    static private String TAG = "Bookshelf";
+    static private int  REQUEST_CAMERA = 1;
+
     private Activity mMainActivity;
     private Button scan_btn;
     private EditText mBookID;
@@ -41,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private Thread parserThread;
     private URL url;
 
-
-    static private int  REQUEST_CAMERA = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         mMainActivity = this;
 
         init_view();
+
+        mUIHandler = new UIHandler();
+
         scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
             requestCameraPermission();
         }
 
-        mUIHandler = new UIHandler();
-
     }
 
 
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         if(scanningResult!=null){
             String scanContent=scanningResult.getContents();
             mBookID.setText(scanContent);
-            parserThread = new Thread(new parseHTML());
+            parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
         }else{
             Toast.makeText(getApplicationContext(),"nothing",Toast.LENGTH_SHORT).show();
@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void init_view(){
         scan_btn = (Button)findViewById(R.id.scan);
         mBookID = (EditText) findViewById(R.id.bookid);
@@ -144,22 +143,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class parseHTML implements Runnable {
+    private class parseHTMLTask implements Runnable {
 
         @Override
         public void run() {
             try {
-                String preURL = "http://search.books.com.tw/search/query/key/";
-                url= new URL( preURL + mBookID.getText());
-                Document doc =  Jsoup.parse(url, 3000);
+
+                url= new URL(Config.QUERY_URL + mBookID.getText());
+                Document doc = Jsoup.parse(url, 3000);
+                //find book name title
                 Elements title = doc.select("a[rel=mid_image]");
                 String name = title.attr("title");
-                Log.d(TAG,"book name:" + name);
+                String link = title.attr("href");
+                Log.d(TAG,"book name: " + name);
+                Log.d(TAG,"book link: " + link);
 
                 Message msg = Message.obtain();
                 msg.obj = name;
                 mUIHandler.sendMessage(msg);
-                //mBookName.setText(title.get(0).text());
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -172,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
     private class UIHandler extends Handler {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            //mImageViewPic.setImageBitmap((Bitmap)msg.obj);
             mBookName.setText((String)msg.obj);
         }
     };
