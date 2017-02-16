@@ -38,17 +38,17 @@ public class BooksParser {
 
     }
 
-    public String getBookPublish(){
+    public String getBookAuthor(){
         Elements Eauthor = mDoc.select("a[rel=go_author]");
         return Eauthor.attr("title");
 
     }
 
-    public String getBookAuthor(){
+    public String getBookPublish(){
         Elements EPublish = mDoc.select("a[rel=mid_publish]");
         return EPublish.attr("title");
-
     }
+
 
     public String getBookCoverLink(){
         Elements EImg = mDoc.select("img[class=itemcov]");
