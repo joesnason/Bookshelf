@@ -167,38 +167,26 @@ public class MainActivity extends AppCompatActivity {
 
                 BooksParser parser = new BooksParser(mBookID.getText().toString());
 
+                // book cover first
+                Bitmap bmp = parser.getBookCover();
+                Message updateCover = mUIHandler.obtainMessage(UPDATE_BOOK_COVER,bmp);
+                mUIHandler.sendMessage(updateCover);
+
                 //find book name title
                 String name  = parser.getBookName();
                 Log.d(TAG,"book name: " + name);
-
-                Message msg = Message.obtain();
-                msg.what = UPDATE_BOOK_NAME;
-                msg.obj = name;
+                Message msg = mUIHandler.obtainMessage(UPDATE_BOOK_NAME,name);
                 mUIHandler.sendMessage(msg);
 
                 String author = parser.getBookAuthor();
                 Log.d(TAG,"book author: " + author);
-
-                Message updateAuthor = Message.obtain();
-                updateAuthor.what = UPDATE_BOOK_AUTHOR;
-                updateAuthor.obj = author;
+                Message updateAuthor = mUIHandler.obtainMessage(UPDATE_BOOK_AUTHOR,author);
                 mUIHandler.sendMessage(updateAuthor);
 
                 String publish = parser.getBookPublish();
                 Log.d(TAG,"book publish: " + publish);
-
-                Message updatePublish = Message.obtain();
-                updatePublish.what = UPDATE_BOOK_PUBLISH;
-                updatePublish.obj = publish;
+                Message updatePublish = mUIHandler.obtainMessage(UPDATE_BOOK_PUBLISH,publish);
                 mUIHandler.sendMessage(updatePublish);
-
-
-                Bitmap bmp = parser.getBookCover();
-
-                Message updateCover = Message.obtain();
-                updateCover.what = UPDATE_BOOK_COVER;
-                updateCover.obj = bmp;
-                mUIHandler.sendMessage(updateCover);
 
             } catch (IOException e) {
                 e.printStackTrace();
