@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.jonathan.bookshelf.parser.BooksParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -164,19 +165,18 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             try {
 
-                url= new URL(Config.QUERY_URL + mBookID.getText());
-                Document doc = Jsoup.parse(url, 3000);
+                BooksParser parser = new BooksParser(mBookID.getText().toString());
+
                 //find book name title
-                Elements title = doc.select("a[rel=mid_image]");
-                String name = title.attr("title");
+                String name  = parser.getBookName();
                 Log.d(TAG,"book name: " + name);
+
                 Message msg = Message.obtain();
                 msg.what = UPDATE_BOOK_NAME;
                 msg.obj = name;
                 mUIHandler.sendMessage(msg);
 
-                Elements Eauthor = doc.select("a[rel=go_author]");
-                String author = Eauthor.attr("title");
+                String author = parser.getBookAuthor();
                 Log.d(TAG,"book author: " + author);
 
                 Message updateAuthor = Message.obtain();
@@ -184,8 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 updateAuthor.obj = author;
                 mUIHandler.sendMessage(updateAuthor);
 
-                Elements EPublish = doc.select("a[rel=mid_publish]");
-                String publish = EPublish.attr("title");
+                String publish = parser.getBookPublish();
                 Log.d(TAG,"book publish: " + publish);
 
                 Message updatePublish = Message.obtain();
@@ -193,20 +192,14 @@ public class MainActivity extends AppCompatActivity {
                 updatePublish.obj = publish;
                 mUIHandler.sendMessage(updatePublish);
 
-                Elements EImg = doc.select("img[class=itemcov]");
-                String image_url = EImg.attr("data-original");
-                Log.d(TAG,"book image link: " + image_url);
 
-                InputStream in = new URL(image_url).openStream();
-                Bitmap bmp = BitmapFactory.decodeStream(in);
+                Bitmap bmp = parser.getBookCover();
 
                 Message updateCover = Message.obtain();
                 updateCover.what = UPDATE_BOOK_COVER;
                 updateCover.obj = bmp;
                 mUIHandler.sendMessage(updateCover);
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
