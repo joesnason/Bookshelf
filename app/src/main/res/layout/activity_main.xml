@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Book ID: " />
+            android:text="@string/ISBN" />
 
         <EditText
             android:id="@+id/bookid"
@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name: " />
+            android:text="@string/BookName" />
 
         <TextView
             android:id="@+id/bookname"
@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Author: " />
+            android:text="@string/BookAuthor" />
 
         <TextView
             android:id="@+id/author"
@@ -80,7 +80,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Publish: " />
+            android:text="@string/BookPublish" />
 
         <TextView
             android:id="@+id/publish"

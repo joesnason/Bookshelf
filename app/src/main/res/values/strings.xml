@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Bookshelf</string>
+
+
+    <string name="ISBN">ISBN: </string>
+    <string name="BookName">Name: </string>
+    <string name="BookAuthor">Author: </string>
+    <string name="BookPublish">Publish</string>
 </resources>
