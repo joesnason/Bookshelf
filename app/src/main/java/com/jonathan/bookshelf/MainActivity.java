@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.jonathan.bookshelf.databases.Book;
+import com.jonathan.bookshelf.databases.BookDAO;
 import com.jonathan.bookshelf.parser.BooksParser;
 
 import org.jsoup.Jsoup;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mBookPublish;
     private ImageView mBookCover;
 
+    private BookDAO bookDAO;
+
     private UIHandler mUIHandler;
     private Thread parserThread;
     private URL url;
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         init_view();
 
         mUIHandler = new UIHandler();
+
+        bookDAO = new BookDAO(getApplicationContext());
 
         scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,10 +98,17 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(scanningResult!=null){
-            String scanContent=scanningResult.getContents();
+            String scanContent = scanningResult.getContents();
             mBookID.setText(scanContent);
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
+
+            Book book = bookDAO.query(scanContent);
+            if (book == null) {
+                Log.d(TAG, "I have no this book");
+            }
+
+
         }else{
             Toast.makeText(getApplicationContext(),"nothing",Toast.LENGTH_SHORT).show();
         }
