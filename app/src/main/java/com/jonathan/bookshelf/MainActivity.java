@@ -48,10 +48,11 @@ public class MainActivity extends AppCompatActivity {
 
     private Activity mMainActivity;
     private Button scan_btn;
-    private EditText mBookID;
+    private TextView mBookID;
     private TextView mBookName;
     private TextView mBookAuthor;
     private TextView mBookPublish;
+    private TextView mNotice;
     private ImageView mBookCover;
 
     private BookDAO bookDAO;
@@ -104,8 +105,11 @@ public class MainActivity extends AppCompatActivity {
             parserThread.start();
 
             Book book = bookDAO.query(scanContent);
-            if (book == null) {
-                Log.d(TAG, "I have no this book");
+            if (book != null) {
+                Log.d(TAG, "I have this book");
+                mNotice.setText("I have had this book!");
+            } else {
+                mNotice.setText("");
             }
 
 
@@ -142,12 +146,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void init_view(){
+        mBookCover = (ImageView) findViewById(R.id.bookcover);
         scan_btn = (Button)findViewById(R.id.scan);
-        mBookID = (EditText) findViewById(R.id.bookid);
+        mBookID = (TextView) findViewById(R.id.bookid);
         mBookName = (TextView) findViewById(R.id.bookname);
         mBookAuthor = (TextView) findViewById(R.id.author);
         mBookPublish = (TextView) findViewById(R.id.publish);
-        mBookCover = (ImageView) findViewById(R.id.bookcover);
+        mNotice = (TextView) findViewById(R.id.notice);
     }
 
 
