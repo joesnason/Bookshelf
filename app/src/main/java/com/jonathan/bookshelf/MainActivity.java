@@ -104,6 +104,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Save cover file finish");
                 }
 
+                book = bookDAO.insert(book);
+                if(book.getID() > 0){
+                    Log.d(TAG, "save to database index: " + book.getID());
+                }
+
             }
         });
 

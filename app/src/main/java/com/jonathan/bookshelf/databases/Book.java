@@ -6,7 +6,7 @@ package com.jonathan.bookshelf.databases;
 
 public class Book {
 
-    private long id;
+    private long id = 0;
     private String name = null;
     private String ISBN = null;
     private String author = null;
