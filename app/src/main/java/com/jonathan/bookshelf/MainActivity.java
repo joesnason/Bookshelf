@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private Activity mMainActivity;
     private Button mScan_btn;
     private Button mSave_btn;
-    private TextView mBookID;
+    private TextView mBookISBN;
     private TextView mBookName;
     private TextView mBookAuthor;
     private TextView mBookPublish;
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         mSave_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Book book = new Book(mBookID.getText().toString());
+                Book book = new Book(mBookISBN.getText().toString());
                 book.setName(mBookName.getText().toString());
                 book.setAuthor(mBookAuthor.getText().toString());
                 book.setPublish(mBookPublish.getText().toString());
@@ -123,7 +123,10 @@ public class MainActivity extends AppCompatActivity {
             requestCameraPermission();
         }
 
-        if(ContextCompat.checkSelfPermission(mMainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+        if(ContextCompat.checkSelfPermission(mMainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            mSave_btn.setEnabled(true);
+        } else {
+            mSave_btn.setEnabled(false);
             requestWriteStoragePermission();
         }
 
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(scanningResult!=null){
             String scanContent = scanningResult.getContents();
-            mBookID.setText(scanContent);
+            mBookISBN.setText(scanContent);
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
 
@@ -182,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
     private void init_view(){
         mBookCover = (ImageView) findViewById(R.id.bookcover);
         mScan_btn = (Button)findViewById(R.id.scan);
-        mBookID = (TextView) findViewById(R.id.bookid);
+        mBookISBN = (TextView) findViewById(R.id.bookid);
         mBookName = (TextView) findViewById(R.id.bookname);
         mBookAuthor = (TextView) findViewById(R.id.author);
         mBookPublish = (TextView) findViewById(R.id.publish);
@@ -258,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             try {
 
-                BooksParser parser = new BooksParser(mBookID.getText().toString());
+                BooksParser parser = new BooksParser(mBookISBN.getText().toString());
 
                 // book cover first
                 Bitmap bmp = parser.getBookCover();
