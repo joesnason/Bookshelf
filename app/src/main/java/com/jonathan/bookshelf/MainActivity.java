@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -31,6 +33,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     static private String TAG = "Bookshelf";
     static private int  REQUEST_CAMERA = 1;
+    static private int  REQUEST_WRITE_STORAGE = 2;
 
     private final int UPDATE_BOOK_NAME = 1;
     private final int UPDATE_BOOK_AUTHOR = 2;
@@ -47,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private final int UPDATE_BOOK_COVER = 4;
 
     private Activity mMainActivity;
-    private Button scan_btn;
+    private Button mScan_btn;
+    private Button mSave_btn;
     private TextView mBookID;
     private TextView mBookName;
     private TextView mBookAuthor;
@@ -74,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         bookDAO = new BookDAO(getApplicationContext());
 
-        scan_btn.setOnClickListener(new View.OnClickListener() {
+        mScan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 IntentIntegrator scanIntegrator = new IntentIntegrator(mMainActivity);
@@ -83,14 +90,36 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        mSave_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Book book = new Book(mBookID.getText().toString());
+                book.setName(mBookName.getText().toString());
+                book.setAuthor(mBookAuthor.getText().toString());
+                book.setPublish(mBookPublish.getText().toString());
+
+                Bitmap CoverBmp = ((BitmapDrawable)mBookCover.getDrawable()).getBitmap();
+                if(SaveBmp(CoverBmp,book.getISBN())) {
+                    book.setCoverLink(Environment.DIRECTORY_PICTURES + "/Boookshelf/" + book.getISBN() + ".png");
+                    Log.d(TAG, "Save cover file finish");
+                }
+
+            }
+        });
+
+
         // Check if the Camera permission is already available.
         if ( ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             // already available
-            scan_btn.setEnabled(true);
+            mScan_btn.setEnabled(true);
         } else {
-            scan_btn.setEnabled(false);
+            mScan_btn.setEnabled(false);
             // asking whether to allow permission...
             requestCameraPermission();
+        }
+
+        if(ContextCompat.checkSelfPermission(mMainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestWriteStoragePermission();
         }
 
     }
@@ -132,10 +161,10 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Camera permission has been granted, preview can be displayed
                 Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-                scan_btn.setEnabled(true);
+                mScan_btn.setEnabled(true);
             } else {
                 Log.i(TAG, "CAMERA permission was NOT granted.");
-                scan_btn.setEnabled(false);
+                mScan_btn.setEnabled(false);
             }
         }
         // other callback
@@ -147,12 +176,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void init_view(){
         mBookCover = (ImageView) findViewById(R.id.bookcover);
-        scan_btn = (Button)findViewById(R.id.scan);
+        mScan_btn = (Button)findViewById(R.id.scan);
         mBookID = (TextView) findViewById(R.id.bookid);
         mBookName = (TextView) findViewById(R.id.bookname);
         mBookAuthor = (TextView) findViewById(R.id.author);
         mBookPublish = (TextView) findViewById(R.id.publish);
         mNotice = (TextView) findViewById(R.id.notice);
+        mSave_btn = (Button) findViewById(R.id.save);
     }
 
 
@@ -175,6 +205,46 @@ public class MainActivity extends AppCompatActivity {
             // Camera permission has not been granted yet. Request it directly.
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA) ;
         }
+    }
+
+    private void requestWriteStoragePermission() {
+        Log.i( TAG, "WRITE EXTERNAL STORAGE permission has NOT been granted. Requesting permission." ) ;
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale( this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
+            // Provide an additional rationale to the user if the permission was not granted
+            // and the user would benefit from additional context for the use of the permission.
+            // For example if the user has previously denied the permission.
+            Log.i(TAG, "WRITE EXTERNAL STORAGE permission rationale to provide additional context.") ;
+
+
+        } else {
+            // Camera permission has not been granted yet. Request it directly.
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE) ;
+        }
+    }
+
+    private Boolean SaveBmp(Bitmap bmp, String name){
+        FileOutputStream out = null;
+        File path = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES + "/Boookshelf");
+        File file = new File(path, name + ".png");
+        try {
+            // create directory
+            path.mkdirs();
+
+            out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.close();
+            return true;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     private class parseHTMLTask implements Runnable {
