@@ -140,13 +140,16 @@ public class MainActivity extends AppCompatActivity {
             mBookISBN.setText(scanContent);
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
+            mSave_btn.setVisibility(View.VISIBLE);
 
             Book book = bookDAO.query(scanContent);
             if (book != null) {
                 Log.d(TAG, "I have this book");
                 mNotice.setText("I have had this book!");
+                mSave_btn.setEnabled(false);
             } else {
                 mNotice.setText("");
+                mSave_btn.setEnabled(true);
             }
 
 

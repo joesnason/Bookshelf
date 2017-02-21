@@ -106,7 +106,9 @@
         android:layout_height="wrap_content"
         android:text="Save"
         android:layout_marginRight="10dp"
-        android:layout_gravity="right"/>
+        android:layout_gravity="right"
+        android:visibility="invisible"
+        android:enabled="false"/>
 
 
 </LinearLayout>
