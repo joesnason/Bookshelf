@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         mSave_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Bitmap CoverBmp = ((BitmapDrawable)mBookCover.getDrawable()).getBitmap();
                 if(SaveBmp(CoverBmp,book.getISBN())) {
-                    book.setCoverLink(Environment.DIRECTORY_PICTURES + "/Boookshelf/" + book.getISBN() + ".png");
+                    book.setCoverLink(getSaveFolder().getPath() + "/" + book.getISBN() + ".png");
                     Log.d(TAG, "Save cover file finish");
                 }
 
@@ -151,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
                 mNotice.setText("");
                 mSave_btn.setEnabled(true);
             }
-
 
         }else{
             Toast.makeText(getApplicationContext(),"nothing",Toast.LENGTH_SHORT).show();
@@ -236,8 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Boolean SaveBmp(Bitmap bmp, String name){
         FileOutputStream out = null;
-        File path = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES + "/Boookshelf");
+        File path = getSaveFolder();
         File file = new File(path, name + ".png");
         try {
             // create directory
@@ -256,6 +253,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    private File getSaveFolder(){
+        return Config.FOLDER;
     }
 
     private class parseHTMLTask implements Runnable {
