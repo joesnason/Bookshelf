@@ -29,7 +29,7 @@ public class MainPageActivity extends AppCompatActivity {
         mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, MainActivity.class);
+                Intent intent = new Intent(mContext, BookInfoActivity.class);
                 startActivity(intent);
 
             }
