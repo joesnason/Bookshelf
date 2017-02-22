@@ -11,7 +11,7 @@ public class MainPageActivity extends AppCompatActivity {
 
     private Context mContext;
 
-    private Button mAddBtn;
+    private Button mAddBtn, mSearchBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,15 @@ public class MainPageActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext, BookInfoActivity.class);
                 startActivity(intent);
 
+            }
+        });
+
+        mSearchBtn = (Button) findViewById(R.id.search_btn);
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, SearchActivity.class);
+                startActivity(intent);
             }
         });
 

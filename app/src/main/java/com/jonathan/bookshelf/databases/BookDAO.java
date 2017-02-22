@@ -97,6 +97,13 @@ public class BookDAO {
 
     }
 
+    public Cursor getAll(){
+        Cursor result = db.query(
+                TABLE_NAME, null, null, null, null, null, null, null);
+
+        return result;
+    }
+
 
     private Book getRecord(Cursor cursor){
         Book book = new Book();
