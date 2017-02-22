@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="com.jonathan.bookshelf.MainActivity">
+    tools:context="com.jonathan.bookshelf.BookInfoActivity">
 
 
     <LinearLayout
@@ -35,61 +35,86 @@
              />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/bookcover"
-        android:layout_height="120dp"
-        android:layout_width="85dp"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/BookName" />
 
-        <TextView
-            android:id="@+id/bookname"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            />
+        <ImageView
+            android:id="@+id/bookcover"
+            android:layout_height="120dp"
+            android:layout_width="85dp"
+            android:layout_gravity="center"
+            android:src ="@android:drawable/stat_notify_error"
+            android:background="@android:color/darker_gray"
+            android:visibility="visible"/>
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:paddingLeft="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/BookName" />-->
+
+                <TextView
+                    android:id="@+id/bookname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/BookAuthor" />
+
+                <TextView
+                    android:id="@+id/author"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/BookPublish" />
+
+                <TextView
+                    android:id="@+id/publish"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/BookAuthor" />
-
-        <TextView
-            android:id="@+id/author"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/BookPublish" />
-
-        <TextView
-            android:id="@+id/publish"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            />
-    </LinearLayout>
     <TextView
         android:id="@+id/notice"
         android:layout_width="wrap_content"
