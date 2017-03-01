@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 
 public class BookInfoActivity extends AppCompatActivity {
 
@@ -57,7 +56,6 @@ public class BookInfoActivity extends AppCompatActivity {
 
     private UIHandler mUIHandler;
     private Thread parserThread;
-    private URL url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +95,7 @@ public class BookInfoActivity extends AppCompatActivity {
 
                 book = bookDAO.insert(book);
                 if(book.getID() > 0){
+                    showMessage("Save data successful");
                     Log.d(TAG, "save to database index: " + book.getID());
                 }
 
@@ -144,7 +143,7 @@ public class BookInfoActivity extends AppCompatActivity {
             }
 
         }else{
-            Toast.makeText(getApplicationContext(),"nothing",Toast.LENGTH_SHORT).show();
+            showMessage("nothtin");
         }
     }
 
@@ -251,6 +250,11 @@ public class BookInfoActivity extends AppCompatActivity {
         return Config.FOLDER;
     }
 
+
+    private void showMessage(String string){
+        Toast.makeText(this, string, Toast.LENGTH_LONG).show();
+    }
+
     private class parseHTMLTask implements Runnable {
 
         @Override
@@ -281,6 +285,7 @@ public class BookInfoActivity extends AppCompatActivity {
                 mUIHandler.sendMessage(updatePublish);
 
             } catch (IOException e) {
+                showMessage("Search ISBN fail");
                 e.printStackTrace();
             }
         }
