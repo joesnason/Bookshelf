@@ -6,4 +6,8 @@
     <string name="BookName">Name: </string>
     <string name="BookAuthor">Author: </string>
     <string name="BookPublish">Publish: </string>
+
+
+    <string name="action_settings"> Action Setting</string>
+    <string name="search_title">search title</string>
 </resources>
