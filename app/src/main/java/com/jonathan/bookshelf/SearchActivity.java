@@ -7,11 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.jonathan.bookshelf.databases.BookDAO;
 
@@ -24,6 +28,8 @@ public class SearchActivity extends AppCompatActivity {
     private BookDAO mBookDAO;
     private Cursor mAllBooks;
 
+    private BookCursorAdapter mBookAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,11 +41,9 @@ public class SearchActivity extends AppCompatActivity {
         mBookDAO = new BookDAO(getApplicationContext());
         mAllBooks = mBookDAO.getAll();
 
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_2,mAllBooks,
-                new String[] {BookDAO.FIELD_NAME, BookDAO.FIELD_AUTHOR },
-                new int[] {android.R.id.text1, android.R.id.text2});
+        mBookAdapter = new BookCursorAdapter(mContext,mAllBooks);
 
-        mListView.setAdapter(adapter);
+        mListView.setAdapter(mBookAdapter);
     }
 
     @Override
@@ -63,14 +67,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG,"get string: " + newText);
-                mAllBooks = mBookDAO.queryAll(newText);
+                 Cursor mBooks = mBookDAO.queryAll(newText);
 
-                SimpleCursorAdapter adapter = new SimpleCursorAdapter(mContext,android.R.layout.simple_list_item_2,mAllBooks,
-                        new String[] {BookDAO.FIELD_NAME, BookDAO.FIELD_AUTHOR },
-                        new int[] {android.R.id.text1, android.R.id.text2});
-
-                mListView.setAdapter(adapter);
-
+                mBookAdapter.changeCursor(mBooks);
                 return false;
             }
         });
@@ -78,5 +77,30 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setIconifiedByDefault(true);
 
         return true;
+    }
+
+
+    public class BookCursorAdapter extends CursorAdapter{
+
+        public BookCursorAdapter(Context context, Cursor c) {
+            super(context, c);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+
+            return LayoutInflater.from(context).inflate(R.layout.search_list_item,parent,false);
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+
+            TextView title  = (TextView) view.findViewById(R.id.item_title);
+            TextView publish = (TextView) view.findViewById(R.id.item_publish);
+
+            title.setText(cursor.getString(cursor.getColumnIndexOrThrow(BookDAO.FIELD_NAME)));
+            Log.d(TAG,"title: " + title.getText());
+            publish.setText(cursor.getString(cursor.getColumnIndexOrThrow(BookDAO.FIELD_PUBLISH)));
+        }
     }
 }
