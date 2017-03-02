@@ -127,6 +127,10 @@ public class BookInfoActivity extends AppCompatActivity {
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(scanningResult!=null){
             String scanContent = scanningResult.getContents();
+            if(scanContent == null){
+                return;
+            }
+
             mBookISBN.setText(scanContent);
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
@@ -143,7 +147,7 @@ public class BookInfoActivity extends AppCompatActivity {
             }
 
         }else{
-            showMessage("nothtin");
+            showMessage("scan fail");
         }
     }
 
@@ -285,7 +289,7 @@ public class BookInfoActivity extends AppCompatActivity {
                 mUIHandler.sendMessage(updatePublish);
 
             } catch (IOException e) {
-                showMessage("Search ISBN fail");
+                //showMessage("Search ISBN fail");
                 e.printStackTrace();
             }
         }
