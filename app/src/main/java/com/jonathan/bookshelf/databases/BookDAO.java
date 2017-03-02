@@ -78,7 +78,7 @@ public class BookDAO {
 
     }
 
-    public Book query(String ISBN){
+    public Book queryISBN(String ISBN){
 
         Book book = null;
 
@@ -94,6 +94,20 @@ public class BookDAO {
         result.close();
 
         return book;
+
+    }
+
+    public Cursor queryAll(String keyword){
+
+        if(keyword.length() !=0){
+            keyword = "%" + keyword + "%";
+        }
+
+        String SQL = "SELECT * FROM " + TABLE_NAME + " WHERE " + FIELD_ISBN + " like ?";
+
+        Cursor result = db.rawQuery(SQL,new String[] {keyword});
+
+        return result;
 
     }
 

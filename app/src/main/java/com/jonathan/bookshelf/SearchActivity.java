@@ -18,6 +18,7 @@ import com.jonathan.bookshelf.databases.BookDAO;
 public class SearchActivity extends AppCompatActivity {
 
     private static String TAG = "SearchActivity";
+    private Context mContext;
     private ListView mListView;
 
     private BookDAO mBookDAO;
@@ -27,6 +28,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        mContext = this;
 
         mListView = (ListView) findViewById(R.id.resultlist);
 
@@ -61,10 +63,17 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG,"get string: " + newText);
+                mAllBooks = mBookDAO.queryAll(newText);
+
+                SimpleCursorAdapter adapter = new SimpleCursorAdapter(mContext,android.R.layout.simple_list_item_2,mAllBooks,
+                        new String[] {BookDAO.FIELD_NAME, BookDAO.FIELD_AUTHOR },
+                        new int[] {android.R.id.text1, android.R.id.text2});
+
+                mListView.setAdapter(adapter);
+
                 return false;
             }
         });
-
 
         searchView.setIconifiedByDefault(true);
 

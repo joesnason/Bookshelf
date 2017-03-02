@@ -132,7 +132,7 @@ public class BookInfoActivity extends AppCompatActivity {
             parserThread.start();
             mSave_btn.setVisibility(View.VISIBLE);
 
-            Book book = bookDAO.query(scanContent);
+            Book book = bookDAO.queryISBN(scanContent);
             if (book != null) {
                 Log.d(TAG, "I have this book");
                 mNotice.setText("I have had this book!");
