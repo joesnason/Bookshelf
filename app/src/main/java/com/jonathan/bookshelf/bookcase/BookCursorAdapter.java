@@ -2,6 +2,10 @@ package com.jonathan.bookshelf.bookcase;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,5 +52,16 @@ public class BookCursorAdapter extends CursorAdapter {
         ViewHolder viewholder = (ViewHolder) view.getTag();
         viewholder.name.setText(cursor.getString(cursor.getColumnIndexOrThrow(BookDAO.FIELD_NAME)));
         viewholder.publish.setText(cursor.getString(cursor.getColumnIndexOrThrow(BookDAO.FIELD_PUBLISH)));
+
+        String CoverPath = cursor.getString(cursor.getColumnIndexOrThrow(BookDAO.FIELD_COVERLINK));
+        viewholder.cover.setImageBitmap(getCoverBmp(CoverPath));
+    }
+
+    private Bitmap getCoverBmp(String path){
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        return bitmap;
     }
 }
