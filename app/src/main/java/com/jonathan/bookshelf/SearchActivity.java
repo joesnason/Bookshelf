@@ -41,8 +41,7 @@ public class SearchActivity extends AppCompatActivity {
         mBookDAO = new BookDAO(getApplicationContext());
         mAllBooks = mBookDAO.getAll();
 
-        mBookAdapter = new BookCursorAdapter(mContext,mAllBooks);
-
+        mBookAdapter = new BookCursorAdapter(mContext, mAllBooks, false);
         mListView.setAdapter(mBookAdapter);
     }
 
@@ -57,7 +56,6 @@ public class SearchActivity extends AppCompatActivity {
         SearchView searchView  = (SearchView) menuSearchItem.getActionView();
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -67,23 +65,22 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG,"get string: " + newText);
-                 Cursor mBooks = mBookDAO.queryAll(newText);
 
+                Cursor mBooks = mBookDAO.queryAll(newText);
                 mBookAdapter.changeCursor(mBooks);
                 return false;
             }
         });
 
         searchView.setIconifiedByDefault(true);
-
         return true;
     }
 
 
     public class BookCursorAdapter extends CursorAdapter{
 
-        public BookCursorAdapter(Context context, Cursor c) {
-            super(context, c);
+        public BookCursorAdapter(Context context, Cursor c, boolean autoRequery) {
+            super(context, c, autoRequery);
         }
 
         @Override
@@ -99,7 +96,6 @@ public class SearchActivity extends AppCompatActivity {
             TextView publish = (TextView) view.findViewById(R.id.item_publish);
 
             title.setText(cursor.getString(cursor.getColumnIndexOrThrow(BookDAO.FIELD_NAME)));
-            Log.d(TAG,"title: " + title.getText());
             publish.setText(cursor.getString(cursor.getColumnIndexOrThrow(BookDAO.FIELD_PUBLISH)));
         }
     }
