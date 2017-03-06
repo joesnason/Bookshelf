@@ -73,6 +73,8 @@ public class BookInfoActivity extends AppCompatActivity {
         mScan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                resetUI();
+
                 IntentIntegrator scanIntegrator = new IntentIntegrator(mMainActivity);
                 scanIntegrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
                 scanIntegrator.initiateScan();
@@ -122,6 +124,32 @@ public class BookInfoActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+        Intent intent = getIntent();
+
+        if(intent != null){
+            String scanISBN = intent.getStringExtra("ISBN");
+            mBookISBN.setText(scanISBN);
+            parserThread = new Thread(new parseHTMLTask());
+            parserThread.start();
+            mSave_btn.setVisibility(View.VISIBLE);
+
+            Book book = bookDAO.queryISBN(scanISBN);
+            if (book != null) {
+                Log.d(TAG, "I have this book");
+                mNotice.setText("I have had this book!");
+                mSave_btn.setEnabled(false);
+            } else {
+                mNotice.setText("");
+                mSave_btn.setEnabled(true);
+            }
+        }
+
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
@@ -257,6 +285,17 @@ public class BookInfoActivity extends AppCompatActivity {
 
     private void showMessage(String string){
         Toast.makeText(this, string, Toast.LENGTH_LONG).show();
+    }
+
+    private void resetUI(){
+        mBookISBN.setText("");
+        mBookName.setText("");
+        mBookAuthor.setText("");
+        mBookPublish.setText("");
+        mBookCover.setImageResource(android.R.drawable.stat_notify_error);
+
+        mNotice.setText("");
+        mSave_btn.setEnabled(false);
     }
 
     private class parseHTMLTask implements Runnable {
