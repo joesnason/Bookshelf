@@ -32,6 +32,11 @@ public class BooksParser {
 
     }
 
+    public boolean findedbook(){
+        Elements error = mDoc.select("div[class=mod none]");
+        return (error != null)?false:true;
+    }
+
     public String getBookName(){
         Elements title = mDoc.select("a[rel=mid_image]");
         return title.attr("title");

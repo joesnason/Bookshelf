@@ -41,6 +41,7 @@ public class BookInfoActivity extends AppCompatActivity {
     private final int UPDATE_BOOK_AUTHOR = 2;
     private final int UPDATE_BOOK_PUBLISH = 3;
     private final int UPDATE_BOOK_COVER = 4;
+    private final int UPDATE_UI_RESET = 5;
 
     private Activity mMainActivity;
     private Button mScan_btn;
@@ -122,17 +123,11 @@ public class BookInfoActivity extends AppCompatActivity {
             requestWriteStoragePermission();
         }
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
         Intent intent = getIntent();
 
         if(intent != null){
             String scanISBN = intent.getStringExtra("ISBN");
+            Log.d(TAG,"scan ISBN: " + scanISBN);
             mBookISBN.setText(scanISBN);
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
@@ -151,6 +146,12 @@ public class BookInfoActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent intent){
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(scanningResult!=null){
@@ -159,6 +160,7 @@ public class BookInfoActivity extends AppCompatActivity {
                 return;
             }
 
+            Log.d(TAG,"scan content: " + scanContent);
             mBookISBN.setText(scanContent);
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
@@ -298,6 +300,16 @@ public class BookInfoActivity extends AppCompatActivity {
         mSave_btn.setEnabled(false);
     }
 
+    private void parseFail(){
+        mBookName.setText("");
+        mBookAuthor.setText("");
+        mBookPublish.setText("");
+        mBookCover.setImageResource(android.R.drawable.stat_notify_error);
+
+        mNotice.setText("can't find this book, please scan again.");
+        mSave_btn.setEnabled(false);
+    }
+
     private class parseHTMLTask implements Runnable {
 
         @Override
@@ -329,6 +341,8 @@ public class BookInfoActivity extends AppCompatActivity {
 
             } catch (IOException e) {
                 //showMessage("Search ISBN fail");
+                Message reset = mUIHandler.obtainMessage(UPDATE_UI_RESET);
+                mUIHandler.sendMessage(reset);
                 e.printStackTrace();
             }
         }
@@ -351,6 +365,10 @@ public class BookInfoActivity extends AppCompatActivity {
                 case UPDATE_BOOK_COVER:
                     mBookCover.setVisibility(View.VISIBLE);
                     mBookCover.setImageBitmap((Bitmap)msg.obj);
+                    break;
+                case UPDATE_UI_RESET:
+                    parseFail();
+                    break;
                 default:
                     break;
             }
