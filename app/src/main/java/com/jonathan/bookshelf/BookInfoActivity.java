@@ -34,7 +34,7 @@ import java.io.IOException;
 public class BookInfoActivity extends AppCompatActivity {
 
     static private String TAG = "Bookshelf";
-    static private int  REQUEST_CAMERA = 1;
+
     static private int  REQUEST_WRITE_STORAGE = 2;
 
     private final int UPDATE_BOOK_NAME = 1;
@@ -105,16 +105,6 @@ public class BookInfoActivity extends AppCompatActivity {
             }
         });
 
-
-        // Check if the Camera permission is already available.
-        if ( ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            // already available
-            mScan_btn.setEnabled(true);
-        } else {
-            mScan_btn.setEnabled(false);
-            // asking whether to allow permission...
-            requestCameraPermission();
-        }
 
         if(ContextCompat.checkSelfPermission(mMainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
             mSave_btn.setEnabled(true);
@@ -187,7 +177,7 @@ public class BookInfoActivity extends AppCompatActivity {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CAMERA) {
+        if (requestCode == REQUEST_WRITE_STORAGE) {
             // Received permission result for camera permission.
             Log.i(TAG, "Received response for Camera permission request.");
 
@@ -195,10 +185,10 @@ public class BookInfoActivity extends AppCompatActivity {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Camera permission has been granted, preview can be displayed
                 Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-                mScan_btn.setEnabled(true);
+                mSave_btn.setEnabled(true);
             } else {
                 Log.i(TAG, "CAMERA permission was NOT granted.");
-                mScan_btn.setEnabled(false);
+                mSave_btn.setEnabled(false);
             }
         }
         // other callback
@@ -220,26 +210,6 @@ public class BookInfoActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * Requests the Camera permission.
-     * If the permission has been denied previously, a SnackBar will prompt the user to grant the
-     * permission, otherwise it is requested directly.
-     */
-    private void requestCameraPermission() {
-        Log.i( TAG, "CAMERA permission has NOT been granted. Requesting permission." ) ;
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale( this, Manifest.permission.CAMERA) ) {
-            // Provide an additional rationale to the user if the permission was not granted
-            // and the user would benefit from additional context for the use of the permission.
-            // For example if the user has previously denied the permission.
-            Log.i(TAG, "Displaying camera permission rationale to provide additional context.") ;
-
-
-        } else {
-            // Camera permission has not been granted yet. Request it directly.
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA) ;
-        }
-    }
 
     private void requestWriteStoragePermission() {
         Log.i( TAG, "WRITE EXTERNAL STORAGE permission has NOT been granted. Requesting permission." ) ;
