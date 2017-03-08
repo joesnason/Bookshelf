@@ -1,5 +1,8 @@
 package com.jonathan.bookshelf.databases;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 /**
  * Created by Jonathan on 2017/2/17.
  */
@@ -67,6 +70,13 @@ public class Book {
 
     public String getCoverLink(){
         return coverLink;
+    }
+
+    public Bitmap getCoverBmp() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(coverLink, options);
+        return bitmap;
     }
 
 }

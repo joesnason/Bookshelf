@@ -129,8 +129,7 @@ public class BookInfoActivity extends AppCompatActivity {
                 mBookName.setText(book.getName());
                 mBookAuthor.setText(book.getAuthor());
                 mBookPublish.setText(book.getPublish());
-                String CoverPath = book.getCoverLink();
-                mBookCover.setImageBitmap(getCoverBmp(CoverPath));
+                mBookCover.setImageBitmap(book.getCoverBmp());
                 Log.d(TAG, "had this book");
                 return;
             }
@@ -170,8 +169,7 @@ public class BookInfoActivity extends AppCompatActivity {
                 mBookName.setText(book.getName());
                 mBookAuthor.setText(book.getAuthor());
                 mBookPublish.setText(book.getPublish());
-                String CoverPath = book.getCoverLink();
-                mBookCover.setImageBitmap(getCoverBmp(CoverPath));
+                mBookCover.setImageBitmap(book.getCoverBmp());
                 Log.d(TAG, "had this book");
                 return;
             }
@@ -309,13 +307,6 @@ public class BookInfoActivity extends AppCompatActivity {
         return (book != null)?true:false;
     }
 
-    private Bitmap getCoverBmp(String path){
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
-        return bitmap;
-    }
 
     private class parseHTMLTask implements Runnable {
 
