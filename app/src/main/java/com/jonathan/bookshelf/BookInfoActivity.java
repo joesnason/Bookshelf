@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -98,6 +99,7 @@ public class BookInfoActivity extends AppCompatActivity {
 
                 book = bookDAO.insert(book);
                 if(book.getID() > 0){
+                    mSave_btn.setEnabled(false);
                     showMessage("Save data successful");
                     Log.d(TAG, "save to database index: " + book.getID());
                 }
@@ -119,19 +121,27 @@ public class BookInfoActivity extends AppCompatActivity {
             String scanISBN = intent.getStringExtra("ISBN");
             Log.d(TAG,"scan ISBN: " + scanISBN);
             mBookISBN.setText(scanISBN);
+
+            Book book = findBook(scanISBN);
+            if(book != null){
+                mNotice.setText("I have had this book!");
+                mSave_btn.setEnabled(false);
+                mBookName.setText(book.getName());
+                mBookAuthor.setText(book.getAuthor());
+                mBookPublish.setText(book.getPublish());
+                String CoverPath = book.getCoverLink();
+                mBookCover.setImageBitmap(getCoverBmp(CoverPath));
+                Log.d(TAG, "had this book");
+                return;
+            }
+
+
+
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
             mSave_btn.setVisibility(View.VISIBLE);
-
-            Book book = bookDAO.queryISBN(scanISBN);
-            if (book != null) {
-                Log.d(TAG, "I have this book");
-                mNotice.setText("I have had this book!");
-                mSave_btn.setEnabled(false);
-            } else {
-                mNotice.setText("");
-                mSave_btn.setEnabled(true);
-            }
+            mNotice.setText("");
+            mSave_btn.setEnabled(true);
         }
 
     }
@@ -152,19 +162,27 @@ public class BookInfoActivity extends AppCompatActivity {
 
             Log.d(TAG,"scan content: " + scanContent);
             mBookISBN.setText(scanContent);
+
+            Book book = findBook(scanContent);
+            if(book != null){
+                mNotice.setText("I have had this book!");
+                mSave_btn.setEnabled(false);
+                mBookName.setText(book.getName());
+                mBookAuthor.setText(book.getAuthor());
+                mBookPublish.setText(book.getPublish());
+                String CoverPath = book.getCoverLink();
+                mBookCover.setImageBitmap(getCoverBmp(CoverPath));
+                Log.d(TAG, "had this book");
+                return;
+            }
+
             parserThread = new Thread(new parseHTMLTask());
             parserThread.start();
             mSave_btn.setVisibility(View.VISIBLE);
 
-            Book book = bookDAO.queryISBN(scanContent);
-            if (book != null) {
-                Log.d(TAG, "I have this book");
-                mNotice.setText("I have had this book!");
-                mSave_btn.setEnabled(false);
-            } else {
-                mNotice.setText("");
-                mSave_btn.setEnabled(true);
-            }
+            mNotice.setText("");
+            mSave_btn.setEnabled(true);
+
 
         }else{
             showMessage("scan fail");
@@ -278,6 +296,25 @@ public class BookInfoActivity extends AppCompatActivity {
 
         mNotice.setText("can't find this book, please scan again.");
         mSave_btn.setEnabled(false);
+    }
+
+
+    private Book findBook(String ISBN){
+        return  bookDAO.queryISBN(ISBN);
+    }
+
+    private Boolean hasBook(String ISBN){
+
+        Book book = bookDAO.queryISBN(ISBN);
+        return (book != null)?true:false;
+    }
+
+    private Bitmap getCoverBmp(String path){
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        return bitmap;
     }
 
     private class parseHTMLTask implements Runnable {
