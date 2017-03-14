@@ -51,4 +51,8 @@ dependencies {
 
     // jsoup HTML parser library @ http://jsoup.org/
     compile 'org.jsoup:jsoup:1.10.2'
+
+    // for swipe layout
+
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
 }

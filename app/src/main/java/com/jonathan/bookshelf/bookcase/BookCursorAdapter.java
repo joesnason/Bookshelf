@@ -13,6 +13,8 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.CursorSwipeAdapter;
 import com.jonathan.bookshelf.R;
 import com.jonathan.bookshelf.databases.BookDAO;
 
@@ -20,7 +22,19 @@ import com.jonathan.bookshelf.databases.BookDAO;
  * Created by Jonathan on 2017/3/3.
  */
 
-public class BookCursorAdapter extends CursorAdapter {
+public class BookCursorAdapter extends CursorSwipeAdapter {
+
+    private View.OnTouchListener mTouchListener;
+
+    @Override
+    public int getSwipeLayoutResourceId(int position) {
+        return R.id.swipe;
+    }
+
+    @Override
+    public void closeAllItems() {
+
+    }
 
     private static class ViewHolder {
         TextView name;
@@ -30,6 +44,7 @@ public class BookCursorAdapter extends CursorAdapter {
 
     public BookCursorAdapter(Context context, Cursor c, boolean autoRequery) {
         super(context, c, autoRequery);
+        //mTouchListener = listener;
     }
 
     @Override
@@ -37,11 +52,12 @@ public class BookCursorAdapter extends CursorAdapter {
 
         View view = LayoutInflater.from(context).inflate(R.layout.search_list_item,parent,false);
 
+
         ViewHolder viewholder = new ViewHolder();
         viewholder.name = (TextView) view.findViewById(R.id.item_title);
         viewholder.publish = (TextView) view.findViewById(R.id.item_publish);
         viewholder.cover = (ImageView) view.findViewById(R.id.item_cover);
-
+        //view.setOnTouchListener(mTouchListener);
         view.setTag(viewholder);
         return view;
     }
