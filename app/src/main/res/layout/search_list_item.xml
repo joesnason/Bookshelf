@@ -14,18 +14,21 @@
         android:orientation="horizontal">
         <!--What you want to show-->
 
-        <ImageButton
+        <ImageView
             android:layout_height="match_parent"
             android:layout_width="80dp"
             android:src="@android:drawable/ic_menu_search"
             android:background="@android:color/holo_orange_dark"
+            android:scaleType="centerInside"
             />
 
-        <ImageButton
+        <ImageView
+            android:id="@+id/trash"
             android:layout_height="match_parent"
             android:layout_width="80dp"
             android:src="@android:drawable/ic_menu_delete"
             android:background="@android:color/holo_red_light"
+            android:scaleType="centerInside"
             />
     </LinearLayout>
 

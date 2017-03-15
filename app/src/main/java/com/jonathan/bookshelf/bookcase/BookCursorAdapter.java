@@ -24,6 +24,7 @@ import com.jonathan.bookshelf.databases.BookDAO;
 
 public class BookCursorAdapter extends CursorSwipeAdapter {
 
+    private final static String TAG = "BookCursorAdapter";
     private View.OnTouchListener mTouchListener;
 
     @Override
@@ -37,6 +38,7 @@ public class BookCursorAdapter extends CursorSwipeAdapter {
     }
 
     private static class ViewHolder {
+        SwipeLayout swipeLayout;
         TextView name;
         TextView publish;
         ImageView cover;
@@ -54,10 +56,41 @@ public class BookCursorAdapter extends CursorSwipeAdapter {
 
 
         ViewHolder viewholder = new ViewHolder();
+        viewholder.swipeLayout = (SwipeLayout) view.findViewById(R.id.swipe);
         viewholder.name = (TextView) view.findViewById(R.id.item_title);
         viewholder.publish = (TextView) view.findViewById(R.id.item_publish);
         viewholder.cover = (ImageView) view.findViewById(R.id.item_cover);
-        //view.setOnTouchListener(mTouchListener);
+        viewholder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
+            @Override
+            public void onStartOpen(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onOpen(SwipeLayout layout) {
+                Log.d(TAG,"onOpen");
+            }
+
+            @Override
+            public void onStartClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+            }
+
+            @Override
+            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+            }
+        });
         view.setTag(viewholder);
         return view;
     }
